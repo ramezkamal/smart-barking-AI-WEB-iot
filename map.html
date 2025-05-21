@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحديد الموقع | نظام المواقف</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+
+        #map {
+            height: 500px;
+            margin: 20px 0;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .button-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .next-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .next-btn:hover {
+            background: #27ae60;
+        }
+    </style>
+</head>
+<body>
+    <h2 style="text-align: center; color: #2c3e50;">حدد موقعك على الخريطة 📍</h2>
+    <div id="map"></div>
+    <div class="button-container">
+        <button class="next-btn" onclick="goToSimulation()">تفقد الركنات ➡️</button>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // تهيئة الخريطة
+        const map = L.map('map').setView([24.7136, 46.6753], 13); // إحداثيات السعودية كنقطة بداية
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let selectedLocation = null;
+
+        // إضافة حدث النقر على الخريطة
+        map.on('click', function(e) {
+            if (selectedLocation) {
+                map.removeLayer(selectedLocation);
+            }
+            selectedLocation = L.marker(e.latlng).addTo(map)
+                .bindPopup('الموقع المحدد')
+                .openPopup();
+        });
+
+        function goToSimulation() {
+            if (!selectedLocation) {
+                alert('يرجى تحديد موقع على الخريطة أولاً!');
+                return;
+            }
+            // تخزين الإحداثيات في sessionStorage
+            sessionStorage.setItem('location', JSON.stringify(selectedLocation.getLatLng()));
+            window.location.href = 'simulation.html';
+        }
+    </script>
+</body>
+</html>
